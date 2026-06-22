@@ -1,0 +1,7 @@
+build/
+build-dryrun/
+build-prod/
+dist/
+InstallDriveAuto.exe
+log_instalacao_drivers.txt
+log_*.txt
