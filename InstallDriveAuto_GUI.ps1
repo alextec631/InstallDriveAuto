@@ -3,6 +3,7 @@ Add-Type -AssemblyName System.Drawing
 
 # ==============================
 # InstallDriveAuto GUI - AlexTec
+# Instalacao silenciosa de drivers
 # ==============================
 
 function Test-Admin {
@@ -12,9 +13,7 @@ function Test-Admin {
 }
 
 $BasePath = Split-Path -Parent $MyInvocation.MyCommand.Path
-if ([string]::IsNullOrWhiteSpace($BasePath)) {
-    $BasePath = Get-Location
-}
+if ([string]::IsNullOrWhiteSpace($BasePath)) { $BasePath = Get-Location }
 
 $DriversPath = Join-Path $BasePath "Drivers"
 $LogPath = Join-Path $BasePath "log_instalacao_drivers.txt"
@@ -53,6 +52,45 @@ function Set-Status {
     [System.Windows.Forms.Application]::DoEvents()
 }
 
+function Get-ExeSilentArgs {
+    param([string]$FileName)
+
+    $name = $FileName.ToLower()
+
+    # Regras conhecidas para instaladores comuns de bancada
+    if ($name -like "*samsung*") { return "/S" }
+    if ($name -like "*motorola*") { return "/S" }
+    if ($name -like "*qualcomm*") { return "/S" }
+    if ($name -like "*qloader*" -or $name -like "*qdloader*") { return "/S" }
+    if ($name -like "*mtk*" -or $name -like "*mediatek*") { return "/S" }
+    if ($name -like "*adb*" -or $name -like "*fastboot*") { return "/S" }
+
+    # Padrao geral. Muitos instaladores NSIS aceitam /S.
+    return "/S"
+}
+
+function Start-SilentInstaller {
+    param([System.IO.FileInfo]$Installer)
+
+    $driverLog = Join-Path $BasePath ("log_" + $Installer.BaseName + ".txt")
+
+    if ($Installer.Extension.ToLower() -eq ".msi") {
+        $args = "/i `"$($Installer.FullName)`" /qn /norestart /L*v `"$driverLog`""
+        Write-AppLog "MSI silencioso: msiexec.exe $args"
+        $p = Start-Process "msiexec.exe" -ArgumentList $args -Wait -PassThru
+        Write-AppLog "Finalizado MSI: $($Installer.Name) | Codigo: $($p.ExitCode)" "OK"
+        return
+    }
+
+    if ($Installer.Extension.ToLower() -eq ".exe") {
+        $args = Get-ExeSilentArgs -FileName $Installer.Name
+        Write-AppLog "EXE silencioso: $($Installer.Name) $args"
+        $p = Start-Process $Installer.FullName -ArgumentList $args -Wait -PassThru
+        Write-AppLog "Finalizado EXE: $($Installer.Name) | Codigo: $($p.ExitCode)" "OK"
+        return
+    }
+}
+
 function Start-DriverInstall {
     $btnInstall.Enabled = $false
     $btnOpenDrivers.Enabled = $false
@@ -65,11 +103,12 @@ function Start-DriverInstall {
         "Usuario: $env:USERNAME" | Out-File $LogPath -Append -Encoding UTF8
         "Pasta base: $BasePath" | Out-File $LogPath -Append -Encoding UTF8
         "Pasta drivers: $DriversPath" | Out-File $LogPath -Append -Encoding UTF8
+        "Modo: instalacao silenciosa" | Out-File $LogPath -Append -Encoding UTF8
         "" | Out-File $LogPath -Append -Encoding UTF8
 
         $txtLog.Clear()
         Set-Status "Iniciando verificacoes..." 5
-        Write-AppLog "InstallDriveAuto iniciado."
+        Write-AppLog "InstallDriveAuto iniciado em modo silencioso."
 
         if (!(Test-Admin)) {
             Write-AppLog "Execute o programa como Administrador." "ERRO"
@@ -85,7 +124,7 @@ function Start-DriverInstall {
             Write-AppLog "Pasta Drivers criada automaticamente." "OK"
         }
 
-        Set-Status "Procurando drivers .INF..." 15
+        Set-Status "Procurando drivers..." 15
         $InfFiles = Get-ChildItem -Path $DriversPath -Recurse -Filter "*.inf" -ErrorAction SilentlyContinue
         $Installers = Get-ChildItem -Path $DriversPath -Recurse -Include "*.exe","*.msi" -ErrorAction SilentlyContinue
 
@@ -100,7 +139,6 @@ function Start-DriverInstall {
         }
 
         Set-Status "Instalando drivers .INF..." 25
-
         $totalInf = [Math]::Max($InfFiles.Count, 1)
         $index = 0
 
@@ -111,35 +149,28 @@ function Start-DriverInstall {
             Write-AppLog "Instalando INF: $($Inf.FullName)"
 
             $result = pnputil /add-driver "$($Inf.FullName)" /install 2>&1
-            foreach ($line in $result) {
-                Write-AppLog $line
-            }
+            foreach ($line in $result) { Write-AppLog $line }
         }
 
         if ($Installers.Count -gt 0) {
-            Set-Status "Instaladores adicionais encontrados..." 75
-            $answer = [System.Windows.Forms.MessageBox]::Show("Foram encontrados $($Installers.Count) instaladores .EXE/.MSI. Deseja executar tambem?", "Instaladores adicionais", "YesNo", "Question")
+            Set-Status "Executando instaladores silenciosos..." 75
+            Write-AppLog "Executando .EXE/.MSI automaticamente em modo silencioso." "INFO"
 
-            if ($answer -eq [System.Windows.Forms.DialogResult]::Yes) {
-                $totalInst = [Math]::Max($Installers.Count, 1)
-                $i = 0
+            $totalInst = [Math]::Max($Installers.Count, 1)
+            $i = 0
 
-                foreach ($Installer in $Installers) {
-                    $i++
-                    $percent = 75 + [int](($i / $totalInst) * 20)
-                    Set-Status "Executando instalador $i de $($Installers.Count)..." $percent
-                    Write-AppLog "Executando instalador: $($Installer.FullName)"
+            foreach ($Installer in $Installers) {
+                $i++
+                $percent = 75 + [int](($i / $totalInst) * 20)
+                Set-Status "Instalador silencioso $i de $($Installers.Count)..." $percent
+                Write-AppLog "Executando instalador: $($Installer.FullName)"
 
-                    if ($Installer.Extension -eq ".msi") {
-                        Start-Process "msiexec.exe" -ArgumentList "/i `"$($Installer.FullName)`" /passive /norestart" -Wait
-                    } else {
-                        Start-Process "$($Installer.FullName)" -Wait
-                    }
-
-                    Write-AppLog "Finalizado: $($Installer.Name)" "OK"
+                try {
+                    Start-SilentInstaller -Installer $Installer
                 }
-            } else {
-                Write-AppLog "Instaladores .EXE/.MSI ignorados pelo usuario." "AVISO"
+                catch {
+                    Write-AppLog "Falha ao executar $($Installer.Name): $($_.Exception.Message)" "ERRO"
+                }
             }
         }
 
@@ -180,7 +211,7 @@ $lblTitle.Location = New-Object System.Drawing.Point(25, 20)
 $form.Controls.Add($lblTitle)
 
 $lblSub = New-Object System.Windows.Forms.Label
-$lblSub.Text = "Instalador automatico de drivers - AlexTec"
+$lblSub.Text = "Instalador automatico silencioso de drivers - AlexTec"
 $lblSub.Font = New-Object System.Drawing.Font("Segoe UI", 10)
 $lblSub.ForeColor = [System.Drawing.Color]::WhiteSmoke
 $lblSub.AutoSize = $true
@@ -188,7 +219,7 @@ $lblSub.Location = New-Object System.Drawing.Point(30, 65)
 $form.Controls.Add($lblSub)
 
 $lblInfo = New-Object System.Windows.Forms.Label
-$lblInfo.Text = "Coloque os arquivos .INF, .EXE ou .MSI dentro da pasta Drivers e clique em Instalar."
+$lblInfo.Text = "Coloque os arquivos .INF, .EXE ou .MSI dentro da pasta Drivers. O processo sera silencioso."
 $lblInfo.Font = New-Object System.Drawing.Font("Segoe UI", 9)
 $lblInfo.ForeColor = [System.Drawing.Color]::Gainsboro
 $lblInfo.AutoSize = $true
