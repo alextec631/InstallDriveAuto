@@ -29,11 +29,6 @@ $LogPath = Join-Path $BasePath "log_instalacao_drivers.txt"
 if (!(Test-Path $DriversPath)) {
     Write-Host "[AVISO] Pasta Drivers nao encontrada. Criando automaticamente..." -ForegroundColor Yellow
     New-Item -ItemType Directory -Path $DriversPath -Force | Out-Null
-    New-Item -ItemType Directory -Path (Join-Path $DriversPath "MTK") -Force | Out-Null
-    New-Item -ItemType Directory -Path (Join-Path $DriversPath "Qualcomm") -Force | Out-Null
-    New-Item -ItemType Directory -Path (Join-Path $DriversPath "Samsung") -Force | Out-Null
-    New-Item -ItemType Directory -Path (Join-Path $DriversPath "Motorola") -Force | Out-Null
-    New-Item -ItemType Directory -Path (Join-Path $DriversPath "UsbDk") -Force | Out-Null
 }
 
 Write-Host "[1/4] Procurando arquivos .INF dentro da pasta Drivers..." -ForegroundColor Yellow
@@ -42,14 +37,11 @@ $InfFiles = Get-ChildItem -Path $DriversPath -Recurse -Filter "*.inf" -ErrorActi
 
 if ($InfFiles.Count -eq 0) {
     Write-Host "[AVISO] Nenhum arquivo .INF encontrado dentro da pasta Drivers." -ForegroundColor Red
-    Write-Host "Coloque os drivers extraidos dentro da pasta Drivers e rode novamente." -ForegroundColor Yellow
+    Write-Host "Coloque todos os drivers extraidos dentro da pasta Drivers e rode novamente." -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "Estrutura recomendada:" -ForegroundColor Cyan
-    Write-Host "Drivers\MTK"
-    Write-Host "Drivers\Qualcomm"
-    Write-Host "Drivers\Samsung"
-    Write-Host "Drivers\Motorola"
-    Write-Host "Drivers\UsbDk"
+    Write-Host "Estrutura simples:" -ForegroundColor Cyan
+    Write-Host "Drivers\"
+    Write-Host "  coloque aqui os arquivos .inf, .exe ou .msi dos drivers"
     Pause
     exit
 }
