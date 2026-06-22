@@ -5,20 +5,22 @@ Script simples para instalacao automatica de drivers no Windows usando CMD e Pow
 ## Como usar
 
 1. Baixe o repositorio em ZIP ou clone pelo Git.
-2. Extraia os drivers dentro da pasta `Drivers`.
+2. Extraia ou coloque todos os drivers dentro da pasta `Drivers`.
 3. Clique com o botao direito em `instalar_drivers.bat`.
 4. Escolha **Executar como administrador**.
 5. Aguarde a instalacao e reinicie o computador.
 
-## Estrutura recomendada
+## Estrutura simples
 
 ```text
-Drivers/
-├── MTK/
-├── Qualcomm/
-├── Samsung/
-├── Motorola/
-└── UsbDk/
+InstallDriveAuto/
+├── instalar_drivers.bat
+├── instalar_drivers.ps1
+└── Drivers/
+    ├── driver_mtk.inf
+    ├── driver_qualcomm.inf
+    ├── Samsung_USB_Driver.exe
+    └── UsbDk.msi
 ```
 
 ## O que o script faz?
@@ -29,7 +31,7 @@ Drivers/
 - Pode executar instaladores `.exe` e `.msi` se o usuario confirmar.
 - Funciona executando pelo `.bat` ou diretamente pelo PowerShell.
 
-## Drivers que voce pode organizar
+## Drivers que voce pode colocar na pasta Drivers
 
 - MediaTek USB VCOM / Preloader
 - Qualcomm HS-USB QDLoader 9008
