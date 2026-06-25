@@ -2,6 +2,12 @@
 
 Instalador único, silencioso e automático de drivers para Windows.
 
+A versão 1.3 adiciona identidade visual própria, ícone tecnológico e um painel
+moderno com status, progresso e atividade em tempo real.
+
+O driver Samsung Exynos é instalado diretamente pelos pacotes `.inf` assinados,
+sem abrir o assistente manual do instalador original.
+
 ## Uso
 
 1. Baixe `InstallDriveAuto.exe`.

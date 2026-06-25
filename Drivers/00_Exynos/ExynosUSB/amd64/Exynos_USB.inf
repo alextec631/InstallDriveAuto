@@ -1,0 +1,200 @@
+;
+; Exynos_USB.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Ports
+ClassGUID={4D36E978-E325-11CE-BFC1-08002BE10318}
+Provider=%MfgName%
+DriverVer = 08/28/2017,20.36.7.262
+CatalogFile=Exynos_USB.cat
+
+[SourceDisksFiles]
+Exynos_USB.sys = 1
+
+[SourceDisksNames]
+1 = %DISK_NAME%,,,""
+
+[Manufacturer]
+%MfgName%=SystemLsi, NTx86 , ntamd64 , NTx86.5.1 , NTamd64.5.1
+
+[SystemLsi.NTx86.5.1]
+%TEST.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_090C&PID_1000
+%USB\VID_04E8&PID_1234.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_1234
+%USB\VID_04E8&PID_2909.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2909
+%USB\VID_04E8&PID_2910.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2910
+%USB\VID_04E8&PID_2911.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2911
+%USB\VID_04E8&PID_2912.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2912
+%USB\VID_04E8&PID_2913.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2913
+%USB\VID_04E8&PID_2914.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2914
+%USB\VID_04E8&PID_2915.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2915
+%USB\VID_04E8&PID_2916.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2916
+%USB\VID_04E8&PID_2917.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2917
+%USB\VID_04E8&PID_2918.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2918
+%USB\VID_04E8&PID_2919.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2919
+%USB\VID_04E8&PID_2920.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_04E8&PID_2920
+
+[SystemLsi.NTamd64.5.1]
+%TEST.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_090C&PID_1000
+%USB\VID_04E8&PID_1234.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_1234
+%USB\VID_04E8&PID_2909.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2909
+%USB\VID_04E8&PID_2910.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2910
+%USB\VID_04E8&PID_2911.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2911
+%USB\VID_04E8&PID_2912.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2912
+%USB\VID_04E8&PID_2913.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2913
+%USB\VID_04E8&PID_2914.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2914
+%USB\VID_04E8&PID_2915.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2915
+%USB\VID_04E8&PID_2916.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2916
+%USB\VID_04E8&PID_2917.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2917
+%USB\VID_04E8&PID_2918.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2918
+%USB\VID_04E8&PID_2919.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2919
+%USB\VID_04E8&PID_2920.DeviceDesc%=Exynos_USB.Dev.NTamd64.5.1, USB\VID_04E8&PID_2920
+
+[SystemLsi.NTx86]
+%TEST.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_090C&PID_1000
+%USB\VID_04E8&PID_1234.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_1234
+%USB\VID_04E8&PID_2909.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2909
+%USB\VID_04E8&PID_2910.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2910
+%USB\VID_04E8&PID_2911.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2911
+%USB\VID_04E8&PID_2912.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2912
+%USB\VID_04E8&PID_2913.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2913
+%USB\VID_04E8&PID_2914.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2914
+%USB\VID_04E8&PID_2915.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2915
+%USB\VID_04E8&PID_2916.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2916
+%USB\VID_04E8&PID_2917.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2917
+%USB\VID_04E8&PID_2918.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2918
+%USB\VID_04E8&PID_2919.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2919
+%USB\VID_04E8&PID_2920.DeviceDesc%=Exynos_USB.Dev.NTx86, USB\VID_04E8&PID_2920
+
+[SystemLsi.ntamd64]
+%TEST.DeviceDesc%=Exynos_USB.Dev.NTx86.5.1, USB\VID_090C&PID_1000
+%USB\VID_04E8&PID_1234.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_1234
+%USB\VID_04E8&PID_2909.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2909
+%USB\VID_04E8&PID_2910.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2910
+%USB\VID_04E8&PID_2911.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2911
+%USB\VID_04E8&PID_2912.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2912
+%USB\VID_04E8&PID_2913.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2913
+%USB\VID_04E8&PID_2914.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2914
+%USB\VID_04E8&PID_2915.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2915
+%USB\VID_04E8&PID_2916.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2916
+%USB\VID_04E8&PID_2917.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2917
+%USB\VID_04E8&PID_2918.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2918
+%USB\VID_04E8&PID_2919.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2919
+%USB\VID_04E8&PID_2920.DeviceDesc%=Exynos_USB.Dev.ntamd64, USB\VID_04E8&PID_2920
+
+[DestinationDirs]
+Exynos_USB.Files.Ext = 10,System32\Drivers
+
+;+++++++ XP 32bit +++++++
+[Exynos_USB.Dev.NTx86.5.1]
+CopyFiles=Exynos_USB.Files.Ext
+
+[Exynos_USB.Dev.NTx86.5.1.Services]
+Addservice = Exynos_USB, 0x00000002, Exynos_USB.XP.AddService
+;------- XP 32bit -------
+
+;+++++++ XP 64bit +++++++
+[Exynos_USB.Dev.NTamd64.5.1]
+CopyFiles=Exynos_USB.Files.Ext
+
+[Exynos_USB.Dev.NTamd64.5.1.Services]
+Addservice = Exynos_USB, 0x00000002, Exynos_USB.XP.AddService
+;------- XP 64bit -------
+
+;+++++++ Win 7 32bit +++++++
+[Exynos_USB.Dev.NTx86]
+CopyFiles=Exynos_USB.Files.Ext
+
+[Exynos_USB.Dev.NTx86.Services]
+Addservice = Exynos_USB, 0x00000002, Exynos_USB.WIN7.AddService
+;------- Win 7 32bit -------
+
+;+++++++ Win 7 64bit +++++++
+[Exynos_USB.Dev.ntamd64]
+CopyFiles=Exynos_USB.Files.Ext
+
+[Exynos_USB.Dev.ntamd64.Services]
+Addservice = Exynos_USB, 0x00000002, Exynos_USB.WIN7.AddService
+;------- Win 7 64bit -------
+
+[Exynos_USB.XP.AddService]
+DisplayName    = %Exynos_USB.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\Exynos_USB.sys
+LoadOrderGroup = Base
+AddReg	       = Exynos_USB.XP.AddReg
+
+[Exynos_USB.WIN7.AddService]
+DisplayName    = %Exynos_USB.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\Exynos_USB.sys
+LoadOrderGroup = Base
+AddReg         = Exynos_USB.WIN7.AddReg
+
+[Exynos_USB.XP.AddReg]
+HKR,"Parameters","DebugLevel",0x00010001,2
+HKR,"Parameters","DebugLog",0x00010001,0
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,Exynos_USB.sys
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum090C1000",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E81234",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82909",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82910",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82911",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82912",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82913",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82914",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82915",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82916",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82917",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82918",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82919",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags","IgnoreHWSerNum04E82920",0x00000001,1
+
+[Exynos_USB.WIN7.AddReg]
+HKR,"Parameters","DebugLevel",0x00010001,2
+HKR,"Parameters","DebugLog",0x00010001,0
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,Exynos_USB.sys
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\090C10001100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E812340100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829090100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829100100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829110100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829120100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829130100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829140100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829150100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829160100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829170100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829180100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829190100","IgnoreHWSerNum",0x00000001,1
+HKLM,"SYSTEM\CurrentControlSet\Control\usbflags\04E829200100","IgnoreHWSerNum",0x00000001,1
+
+[Exynos_USB.Files.Ext]
+Exynos_USB.sys
+
+[Strings]
+ProviderName="Samsung"
+MfgName="SEC, SYSTEM LSI"
+TEST.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_1234.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2909.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2910.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2911.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2912.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2913.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2914.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2915.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2916.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2917.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2918.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2919.DeviceDesc="Exynos USB Device(4.0.0.0)"
+USB\VID_04E8&PID_2920.DeviceDesc="Exynos USB Device(4.0.0.0)"
+Exynos_USB.SvcDesc="Exynos_USB.sys, SEC SOC USBD Driver"
+DISK_NAME="USB Downloader Installation Disk for SEC SOC"

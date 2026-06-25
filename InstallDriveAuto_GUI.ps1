@@ -1,5 +1,6 @@
 param(
-    [switch]$DryRun
+    [switch]$DryRun,
+    [switch]$Preview
 )
 
 Add-Type -AssemblyName System.Windows.Forms
@@ -75,7 +76,10 @@ function Set-Status {
     param([string]$Text, [int]$Percent)
 
     $script:lblStatus.Text = $Text
-    $script:progress.Value = [Math]::Max(0, [Math]::Min(100, $Percent))
+    $safePercent = [Math]::Max(0, [Math]::Min(100, $Percent))
+    $script:lblPercent.Text = "$safePercent%"
+    $availableWidth = [Math]::Max(0, $script:progressTrack.ClientSize.Width - 4)
+    $script:progressFill.Width = [int]($availableWidth * ($safePercent / 100))
     [System.Windows.Forms.Application]::DoEvents()
 }
 
@@ -271,7 +275,7 @@ function Install-Executable {
             Write-AppLog "Concluido: $($Installer.Name). Codigo: $exitCode" "OK"
         }
         else {
-            Set-Status "IA analisando $($Installer.Name)..." $script:progress.Value
+            Set-Status "IA analisando $($Installer.Name)..." ([int]$script:lblPercent.Text.TrimEnd('%'))
             Write-AppLog "IA local: codigo $exitCode detectado. Validando o resultado real." "AVISO"
 
             Start-Sleep -Milliseconds 700
@@ -334,7 +338,8 @@ function Start-AutomaticInstallation {
             throw "Os drivers internos nao foram encontrados. Gere novamente o InstallDriveAuto.exe."
         }
 
-        $infFiles = @(Get-ChildItem -LiteralPath $DriversPath -Recurse -File -Filter "*.inf" -ErrorAction SilentlyContinue)
+        $infFiles = @(Get-ChildItem -LiteralPath $DriversPath -Recurse -File -Filter "*.inf" -ErrorAction SilentlyContinue |
+            Sort-Object @{ Expression = { if ($_.FullName -match '[\\/]00_Exynos[\\/]') { 0 } else { 1 } } }, FullName)
         $installers = @(Get-ChildItem -LiteralPath $DriversPath -Recurse -File -ErrorAction SilentlyContinue |
             Where-Object { $_.Extension -in @(".exe", ".msi") } |
             Sort-Object Name)
@@ -349,7 +354,13 @@ function Start-AutomaticInstallation {
         for ($index = 0; $index -lt $items.Count; $index++) {
             $item = $items[$index]
             $percent = 5 + [int](90 * ($index / [Math]::Max(1, $items.Count)))
-            Set-Status "Instalando $($index + 1) de $($items.Count): $($item.Name)" $percent
+            $displayName = if ($item.FullName -match '[\\/]00_Exynos[\\/]') {
+                "Samsung Exynos - $($item.Name)"
+            }
+            else {
+                $item.Name
+            }
+            Set-Status "Instalando $($index + 1) de $($items.Count): $displayName" $percent
 
             if ($item.Extension -eq ".inf") {
                 Install-InfDriver -Inf $item
@@ -404,70 +415,170 @@ function Start-AutomaticInstallation {
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "InstallDriveAuto - AlexTec"
-$form.ClientSize = New-Object System.Drawing.Size(720, 455)
+$form.ClientSize = New-Object System.Drawing.Size(900, 620)
 $form.StartPosition = "CenterScreen"
 $form.FormBorderStyle = "FixedDialog"
 $form.MaximizeBox = $false
-$form.BackColor = [System.Drawing.Color]::FromArgb(24, 24, 24)
+$form.BackColor = [System.Drawing.Color]::FromArgb(8, 15, 28)
+$form.Font = New-Object System.Drawing.Font("Segoe UI", 9)
+
+$iconPath = Join-Path $BasePath "assets\InstallDriveAuto.ico"
+if (Test-Path -LiteralPath $iconPath) {
+    $form.Icon = New-Object System.Drawing.Icon($iconPath)
+}
+
+$accent = New-Object System.Windows.Forms.Panel
+$accent.Dock = "Top"
+$accent.Height = 4
+$accent.BackColor = [System.Drawing.Color]::FromArgb(0, 220, 190)
+$form.Controls.Add($accent)
+
+$header = New-Object System.Windows.Forms.Panel
+$header.Location = New-Object System.Drawing.Point(0, 4)
+$header.Size = New-Object System.Drawing.Size(900, 112)
+$header.BackColor = [System.Drawing.Color]::FromArgb(12, 25, 43)
+$form.Controls.Add($header)
+
+$logo = New-Object System.Windows.Forms.PictureBox
+$logoPath = Join-Path $BasePath "assets\InstallDriveAuto-logo-256.png"
+if (Test-Path -LiteralPath $logoPath) {
+    $logo.Image = [System.Drawing.Image]::FromFile($logoPath)
+}
+$logo.SizeMode = "Zoom"
+$logo.Size = New-Object System.Drawing.Size(82, 82)
+$logo.Location = New-Object System.Drawing.Point(24, 15)
+$header.Controls.Add($logo)
 
 $title = New-Object System.Windows.Forms.Label
 $title.Text = "InstallDriveAuto"
-$title.Font = New-Object System.Drawing.Font("Segoe UI", 22, [System.Drawing.FontStyle]::Bold)
-$title.ForeColor = [System.Drawing.Color]::LimeGreen
+$title.Font = New-Object System.Drawing.Font("Segoe UI Semibold", 24, [System.Drawing.FontStyle]::Bold)
+$title.ForeColor = [System.Drawing.Color]::White
 $title.AutoSize = $true
-$title.Location = New-Object System.Drawing.Point(24, 18)
-$form.Controls.Add($title)
+$title.Location = New-Object System.Drawing.Point(118, 21)
+$header.Controls.Add($title)
 
 $subtitle = New-Object System.Windows.Forms.Label
-$subtitle.Text = "Instalacao silenciosa e automatica de drivers"
+$subtitle.Text = "Driver Intelligence  •  instalação automática e recuperação local"
 $subtitle.Font = New-Object System.Drawing.Font("Segoe UI", 10)
-$subtitle.ForeColor = [System.Drawing.Color]::WhiteSmoke
+$subtitle.ForeColor = [System.Drawing.Color]::FromArgb(148, 171, 199)
 $subtitle.AutoSize = $true
-$subtitle.Location = New-Object System.Drawing.Point(29, 63)
-$form.Controls.Add($subtitle)
+$subtitle.Location = New-Object System.Drawing.Point(121, 66)
+$header.Controls.Add($subtitle)
+
+$badge = New-Object System.Windows.Forms.Label
+$badge.Text = " IA LOCAL ATIVA "
+$badge.Font = New-Object System.Drawing.Font("Segoe UI Semibold", 9, [System.Drawing.FontStyle]::Bold)
+$badge.ForeColor = [System.Drawing.Color]::FromArgb(75, 255, 194)
+$badge.BackColor = [System.Drawing.Color]::FromArgb(15, 63, 66)
+$badge.AutoSize = $true
+$badge.Padding = New-Object System.Windows.Forms.Padding(8, 5, 8, 5)
+$badge.Location = New-Object System.Drawing.Point(746, 36)
+$header.Controls.Add($badge)
+
+$statusCard = New-Object System.Windows.Forms.Panel
+$statusCard.Location = New-Object System.Drawing.Point(24, 134)
+$statusCard.Size = New-Object System.Drawing.Size(852, 116)
+$statusCard.BackColor = [System.Drawing.Color]::FromArgb(14, 29, 49)
+$form.Controls.Add($statusCard)
+
+$statusCaption = New-Object System.Windows.Forms.Label
+$statusCaption.Text = "STATUS DA INSTALAÇÃO"
+$statusCaption.Font = New-Object System.Drawing.Font("Segoe UI Semibold", 8, [System.Drawing.FontStyle]::Bold)
+$statusCaption.ForeColor = [System.Drawing.Color]::FromArgb(0, 218, 205)
+$statusCaption.AutoSize = $true
+$statusCaption.Location = New-Object System.Drawing.Point(20, 15)
+$statusCard.Controls.Add($statusCaption)
 
 $script:lblStatus = New-Object System.Windows.Forms.Label
 $script:lblStatus.Text = "Preparando instalacao..."
-$script:lblStatus.Font = New-Object System.Drawing.Font("Segoe UI", 9)
-$script:lblStatus.ForeColor = [System.Drawing.Color]::WhiteSmoke
+$script:lblStatus.Font = New-Object System.Drawing.Font("Segoe UI Semibold", 12)
+$script:lblStatus.ForeColor = [System.Drawing.Color]::White
 $script:lblStatus.AutoSize = $true
-$script:lblStatus.Location = New-Object System.Drawing.Point(29, 100)
-$form.Controls.Add($script:lblStatus)
+$script:lblStatus.Location = New-Object System.Drawing.Point(19, 39)
+$statusCard.Controls.Add($script:lblStatus)
 
-$script:progress = New-Object System.Windows.Forms.ProgressBar
-$script:progress.Size = New-Object System.Drawing.Size(660, 23)
-$script:progress.Location = New-Object System.Drawing.Point(30, 126)
-$form.Controls.Add($script:progress)
+$script:lblPercent = New-Object System.Windows.Forms.Label
+$script:lblPercent.Text = "0%"
+$script:lblPercent.Font = New-Object System.Drawing.Font("Segoe UI Semibold", 11, [System.Drawing.FontStyle]::Bold)
+$script:lblPercent.ForeColor = [System.Drawing.Color]::FromArgb(75, 255, 194)
+$script:lblPercent.TextAlign = "MiddleRight"
+$script:lblPercent.Size = New-Object System.Drawing.Size(70, 25)
+$script:lblPercent.Location = New-Object System.Drawing.Point(758, 37)
+$statusCard.Controls.Add($script:lblPercent)
+
+$script:progressTrack = New-Object System.Windows.Forms.Panel
+$script:progressTrack.Size = New-Object System.Drawing.Size(812, 14)
+$script:progressTrack.Location = New-Object System.Drawing.Point(20, 82)
+$script:progressTrack.BackColor = [System.Drawing.Color]::FromArgb(28, 49, 72)
+$statusCard.Controls.Add($script:progressTrack)
+
+$script:progressFill = New-Object System.Windows.Forms.Panel
+$script:progressFill.Size = New-Object System.Drawing.Size(0, 10)
+$script:progressFill.Location = New-Object System.Drawing.Point(2, 2)
+$script:progressFill.BackColor = [System.Drawing.Color]::FromArgb(0, 218, 205)
+$script:progressTrack.Controls.Add($script:progressFill)
+
+$logCard = New-Object System.Windows.Forms.Panel
+$logCard.Location = New-Object System.Drawing.Point(24, 266)
+$logCard.Size = New-Object System.Drawing.Size(852, 288)
+$logCard.BackColor = [System.Drawing.Color]::FromArgb(14, 29, 49)
+$form.Controls.Add($logCard)
+
+$logTitle = New-Object System.Windows.Forms.Label
+$logTitle.Text = "ATIVIDADE EM TEMPO REAL"
+$logTitle.Font = New-Object System.Drawing.Font("Segoe UI Semibold", 8, [System.Drawing.FontStyle]::Bold)
+$logTitle.ForeColor = [System.Drawing.Color]::FromArgb(0, 218, 205)
+$logTitle.AutoSize = $true
+$logTitle.Location = New-Object System.Drawing.Point(18, 13)
+$logCard.Controls.Add($logTitle)
 
 $script:txtLog = New-Object System.Windows.Forms.TextBox
 $script:txtLog.Multiline = $true
 $script:txtLog.ScrollBars = "Vertical"
 $script:txtLog.ReadOnly = $true
 $script:txtLog.Font = New-Object System.Drawing.Font("Consolas", 9)
-$script:txtLog.BackColor = [System.Drawing.Color]::FromArgb(10, 10, 10)
-$script:txtLog.ForeColor = [System.Drawing.Color]::Lime
-$script:txtLog.Size = New-Object System.Drawing.Size(660, 230)
-$script:txtLog.Location = New-Object System.Drawing.Point(30, 165)
-$form.Controls.Add($script:txtLog)
+$script:txtLog.BorderStyle = "None"
+$script:txtLog.BackColor = [System.Drawing.Color]::FromArgb(7, 17, 31)
+$script:txtLog.ForeColor = [System.Drawing.Color]::FromArgb(132, 240, 208)
+$script:txtLog.Size = New-Object System.Drawing.Size(812, 232)
+$script:txtLog.Location = New-Object System.Drawing.Point(20, 40)
+$logCard.Controls.Add($script:txtLog)
 
 $script:btnLog = New-Object System.Windows.Forms.Button
-$script:btnLog.Text = "Abrir log"
+$script:btnLog.Text = "Abrir relatório"
 $script:btnLog.Enabled = $false
-$script:btnLog.Size = New-Object System.Drawing.Size(110, 32)
-$script:btnLog.Location = New-Object System.Drawing.Point(460, 410)
+$script:btnLog.FlatStyle = "Flat"
+$script:btnLog.FlatAppearance.BorderColor = [System.Drawing.Color]::FromArgb(48, 82, 110)
+$script:btnLog.BackColor = [System.Drawing.Color]::FromArgb(18, 39, 62)
+$script:btnLog.ForeColor = [System.Drawing.Color]::White
+$script:btnLog.Size = New-Object System.Drawing.Size(132, 38)
+$script:btnLog.Location = New-Object System.Drawing.Point(600, 570)
 $script:btnLog.Add_Click({ Start-Process notepad.exe -ArgumentList "`"$LogPath`"" })
 $form.Controls.Add($script:btnLog)
 
 $script:btnClose = New-Object System.Windows.Forms.Button
 $script:btnClose.Text = "Fechar"
-$script:btnClose.Size = New-Object System.Drawing.Size(110, 32)
-$script:btnClose.Location = New-Object System.Drawing.Point(580, 410)
+$script:btnClose.FlatStyle = "Flat"
+$script:btnClose.FlatAppearance.BorderSize = 0
+$script:btnClose.BackColor = [System.Drawing.Color]::FromArgb(0, 178, 161)
+$script:btnClose.ForeColor = [System.Drawing.Color]::White
+$script:btnClose.Font = New-Object System.Drawing.Font("Segoe UI Semibold", 9, [System.Drawing.FontStyle]::Bold)
+$script:btnClose.Size = New-Object System.Drawing.Size(132, 38)
+$script:btnClose.Location = New-Object System.Drawing.Point(744, 570)
 $script:btnClose.Add_Click({ $form.Close() })
 $form.Controls.Add($script:btnClose)
 
 $form.Add_Shown({
     $form.Activate()
-    Start-AutomaticInstallation
+    if ($Preview) {
+        Set-Status "Interface pronta para iniciar a instalação automática" 42
+        $script:txtLog.AppendText("[PREVIEW] Identidade visual InstallDriveAuto v1.3 carregada.`r`n")
+        $script:txtLog.AppendText("[INFO] IA local pronta para diagnosticar e recuperar instalações.`r`n")
+        $script:btnClose.Enabled = $true
+    }
+    else {
+        Start-AutomaticInstallation
+    }
 })
 
 [void]$form.ShowDialog()

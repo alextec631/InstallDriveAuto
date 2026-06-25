@@ -9,6 +9,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 $BasePath = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Source = Join-Path $BasePath "InstallDriveAuto_GUI.ps1"
 $Drivers = Join-Path $BasePath "Drivers"
+$Assets = Join-Path $BasePath "assets"
 $BuildPath = Join-Path $BasePath $(if ($DryRunPackage) { "build-dryrun" } else { "build-prod" })
 $PackagePath = Join-Path $BuildPath "package"
 $DistPath = Join-Path $BasePath "dist"
@@ -29,6 +30,7 @@ $SdkSha256 = "B860F17F9DF3C0524DD2EF2C639AB5E43AD0006B77B8F7BB6D191BF528536885"
 
 if (-not (Test-Path -LiteralPath $Source)) { throw "Arquivo nao encontrado: $Source" }
 if (-not (Test-Path -LiteralPath $Drivers)) { throw "Pasta nao encontrada: $Drivers" }
+if (-not (Test-Path -LiteralPath $Assets)) { throw "Pasta nao encontrada: $Assets" }
 if (-not (Test-Path -LiteralPath $SevenZip)) { throw "Instale o 7-Zip para gerar o EXE unico." }
 
 if (Test-Path -LiteralPath $BuildPath) {
@@ -43,6 +45,7 @@ if (Test-Path -LiteralPath $BuildPath) {
 New-Item -ItemType Directory -Path $PackagePath -Force | Out-Null
 New-Item -ItemType Directory -Path $DistPath -Force | Out-Null
 Copy-Item -LiteralPath $Drivers -Destination $PackagePath -Recurse -Force
+Copy-Item -LiteralPath $Assets -Destination $PackagePath -Recurse -Force
 
 Write-Host "[1/4] Obtendo modulo oficial de instalacao do 7-Zip..." -ForegroundColor Yellow
 Invoke-WebRequest -Uri $SdkUrl -OutFile $SdkArchive -UseBasicParsing
@@ -66,12 +69,13 @@ Write-Host "[2/4] Compilando aplicativo..." -ForegroundColor Yellow
 Invoke-ps2exe `
     -inputFile $Source `
     -outputFile $HelperExe `
+    -iconFile (Join-Path $Assets "InstallDriveAuto.ico") `
     -title "InstallDriveAuto" `
     -description "Instalacao automatica e silenciosa de drivers" `
     -company "AlexTec" `
     -product "InstallDriveAuto" `
     -copyright "AlexTec" `
-    -version "1.2.0.0" `
+    -version "1.3.1.0" `
     -noConsole
 
 Write-Host "[3/4] Compactando aplicativo e drivers..." -ForegroundColor Yellow
